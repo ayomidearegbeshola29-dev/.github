@@ -1,32 +1,45 @@
-# NexDAO
+<div align="center">
+  <br/>
+  <img src="https://via.placeholder.com/100x100/3E8EDE/FFFFFF?text=A" alt="Logo" width="100" height="100"/>
+  <br/>
+  <h1>ayomidearegbeshola29-dev</h1>
+  <p><strong>Building the future on Stellar — one smart contract at a time</strong></p>
+  <p>
+    <a href="https://github.com/ayomidearegbeshola29-dev/stellarrwa">StellarRWA</a> •
+    <a href="https://github.com/ayomidearegbeshola29-dev/nexdao">NexDAO</a> •
+    <a href="https://github.com/ayomidearegbeshola29-dev/Quoren">Quoren</a>
+  </p>
+  <br/>
+</div>
 
-> Modular, open-source DAO framework on Soroban — on-chain voting, treasury management, and token-gated governance for real organisations on Stellar.
+---
 
-## Repositories
+## Projects
 
-| Repo | Description | Stack |
-|------|-------------|-------|
-| [nexdao-frontend](https://github.com/ayomidearegbeshola29-dev/nexdao-frontend) | Governance dashboard | Next.js · TypeScript · Tailwind |
-| [nexdao-backend](https://github.com/ayomidearegbeshola29-dev/nexdao-backend) | REST API + Soroban bridge | Node.js · Express · Prisma |
-| [nexdao-contracts](https://github.com/ayomidearegbeshola29-dev/nexdao-contracts) | Soroban smart contracts | Rust · Soroban SDK |
-| [nexdao-docs](https://github.com/ayomidearegbeshola29-dev/nexdao-docs) | Protocol documentation | Astro · Starlight |
+| Project | Description | Stack |
+|---|---|---|
+| **[StellarRWA](./stellarrwa)** | Open-source toolkit for issuing, managing, and trading compliant real-world assets on Stellar | Next.js · Express · Soroban |
+| **[NexDAO](./nexdao)** | Modular, open-source DAO framework on Soroban with on-chain voting, treasury management, and token-gated governance | Next.js · Express · Soroban |
+| **[Quoren](./Quoren)** | Decentralized credential verification protocol for trusted cross-border verification of licenses and qualifications | Soroban · Rust |
+| **[Crednova](./Crednova)** | Economic trust protocol managing identity bonds, delegation, staking, and on-chain reputation | Soroban · Rust |
+| **[Checkmate-Escrow](./Checkmate-Escrow)** | Trustless chess wagering platform with Soroban smart contracts and real-time Oracle integration | Soroban · React |
 
 ## Quick Start
 
 ```bash
-# Backend
-git clone https://github.com/ayomidearegbeshola29-dev/nexdao-backend
-cd nexdao-backend && npm install && npm run dev
+# StellarRWA — Real World Assets
+git clone https://github.com/ayomidearegbeshola29-dev/stellarrwa
+cd stellarrwa/frontend && npm install && npm run dev
 
-# Frontend
+# NexDAO — DAO Governance
 git clone https://github.com/ayomidearegbeshola29-dev/nexdao-frontend
 cd nexdao-frontend && npm install && npm run dev
 ```
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/ayomidearegbeshola29-dev/.github/blob/main/CONTRIBUTING.md)
+We welcome contributions! See the [Contributing Guide](https://github.com/ayomidearegbeshola29-dev/.github/blob/main/CONTRIBUTING.md) to get started.
 
 ## License
 
-MIT
+All projects in this organization are **MIT** licensed unless otherwise noted.

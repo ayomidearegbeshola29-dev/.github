@@ -1,390 +1,393 @@
-# NexDAO
-
-> **Modular, open-source DAO framework on Soroban** — on-chain voting, treasury management, and token-gated governance for real organisations on Stellar.
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Stellar](https://img.shields.io/badge/Stellar-Soroban-000000?logo=stellar)](https://stellar.org)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![GitHub Org](https://img.shields.io/badge/GitHub-ayomidearegbeshola29--dev-181717?logo=github)](https://github.com/ayomidearegbeshola29-dev)
-
----
-
-## Table of Contents
-
-- [About NexDAO](#about-nexdao)
-- [Architecture Overview](#architecture-overview)
-- [Repository Structure](#repository-structure)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-- [How It Works](#how-it-works)
-- [Development Roadmap](#development-roadmap)
-- [Contributing](#contributing)
-- [Community](#community)
-- [License](#license)
-
----
-
-## About NexDAO
-
-NexDAO is a complete, modular DAO framework built on Stellar's Soroban smart contracts platform. It provides everything you need to launch and operate a decentralised autonomous organisation:
-
-- **On-chain governance** — Proposal creation, quadratic voting, and time-lock execution
-- **Treasury management** — Multi-sig treasury with spending limits and quorum-based execution
-- **Token-gated voting** — SEP-41 governance token determines voting weight
-- **Real-time dashboard** — Live proposal feed, vote tracking, and treasury overview
-- **Developer-friendly** — Comprehensive API, SDK, and documentation
-
-### Why NexDAO?
-
-| Feature | NexDAO | Other DAO Frameworks |
-|---------|--------|---------------------|
-| **Blockchain** | Stellar (Soroban) | Ethereum/EVM |
-| **Gas fees** | Near-zero | High |
-| **Speed** | 3-5 second finality | Minutes |
-| **Voting** | Quadratic | Simple majority |
-| **Treasury** | Multi-sig native | Plugin-based |
-| **Language** | Rust | Solidity |
-| **Tooling** | Stellar SDK + Freighter | MetaMask + Hardhat |
+<div align="center">
+  <br/>
+  <img src="https://via.placeholder.com/120x120/3E8EDE/FFFFFF?text=O" alt="Org Logo" width="120" height="120"/>
+  <br/>
+  <h1>ayomidearegbeshola29-dev</h1>
+  <p>
+    <strong>Open-source Stellar ecosystem projects — RWA tokenization, DAO governance, credential verification, and more.</strong>
+  </p>
+  <p>
+    <a href="https://github.com/ayomidearegbeshola29-dev/stellarrwa">StellarRWA</a> •
+    <a href="https://github.com/ayomidearegbeshola29-dev/nexdao">NexDAO</a> •
+    <a href="https://github.com/ayomidearegbeshola29-dev/Quoren">Quoren</a> •
+    <a href="https://github.com/ayomidearegbeshola29-dev/Crednova">Crednova</a>
+  </p>
+  <p>
+    <img src="https://img.shields.io/badge/Stellar-Soroban-7C3AED?style=flat-square" alt="Soroban"/>
+    <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="MIT"/>
+    <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square" alt="PRs Welcome"/>
+    <img src="https://img.shields.io/badge/Open%20Source-❤️-red?style=flat-square" alt="Open Source"/>
+  </p>
+  <br/>
+</div>
 
 ---
 
-## Architecture Overview
+## 📋 Table of Contents
 
-### High-Level Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          NEXDAO ECOSYSTEM                                    │
-│                                                                              │
-│  ┌─────────────────┐     ┌─────────────────┐     ┌──────────────────────┐   │
-│  │                   │     │                   │     │                        │   │
-│  │   nexdao-frontend │────▶│   nexdao-backend  │────▶│   Stellar Soroban    │   │
-│  │   (Next.js UI)   │     │   (Express API)   │     │   (Smart Contracts)  │   │
-│  │                   │◀────│                   │◀────│                        │   │
-│  └─────────────────┘     └─────────────────┘     └──────────────────────┘   │
-│         │                       │                           │                │
-│         │                       │                           │                │
-│         ▼                       ▼                           ▼                │
-│  ┌─────────────────┐     ┌─────────────────┐     ┌──────────────────────┐   │
-│  │   Freighter      │     │   PostgreSQL    │     │   Governance        │   │
-│  │   Wallet         │     │   Database      │     │   + Treasury + Token│   │
-│  └─────────────────┘     └─────────────────┘     └──────────────────────┘   │
-│                                                                              │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
-### Component Interaction Flow
-
-```
-                          VOTING FLOW
-┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
-│          │     │          │     │          │     │          │
-│  User    │────▶│ Frontend │────▶│ Backend  │────▶│ Soroban  │
-│ (Wallet) │     │ (UI)     │     │ (API)    │     │ Contract │
-│          │◀────│          │◀────│          │◀────│          │
-└──────────┘     └──────────┘     └──────────┘     └──────────┘
-     │                                                  │
-     │           1. Create Proposal                     │
-     │─────────────────────────────────────────────────►│
-     │                                                  │
-     │           2. Vote on Proposal                    │
-     │─────────────────────────────────────────────────►│
-     │                                                  │
-     │           3. Execute Proposal                    │
-     │─────────────────────────────────────────────────►│
-     │                                                  │
-     │                     4. Treasury Transfer         │
-     │─────────────────────────────────────────────────►│
-```
-
-### Smart Contract Architecture
-
-```
-┌─────────────────────────────────────────────────┐
-│              CONTRACT INTERACTIONS               │
-│                                                   │
-│  ┌─────────────────────────────────────────┐    │
-│  │         governance.create_proposal()      │    │
-│  │         governance.vote()                 │    │
-│  │         governance.execute()              │    │
-│  └─────────────────────────────────────────┘    │
-│                        │                        │
-│                        ▼                        │
-│  ┌─────────────────────────────────────────┐    │
-│  │         treasury.execute_spend()         │    │
-│  │                    │                      │    │
-│  │                    ▼                      │    │
-│  │  ┌─────────────────────────────────┐    │    │
-│  │  │  token.transfer() (USDC/XLM)    │    │    │
-│  │  └─────────────────────────────────┘    │    │
-│  └─────────────────────────────────────────┘    │
-│                                                   │
-│  token.balance() ◀── governance contract           │
-│  (for quadratic weight calculation)               │
-└─────────────────────────────────────────────────┘
-```
-
-### Data Flow Sequence
-
-```
-Frontend                    Backend                 Soroban RPC              Stellar
-   │                          │                        │                      │
-   │  1. GET /api/proposals   │                        │                      │
-   │─────────────────────────►│                        │                      │
-   │                          │                        │                      │
-   │  2. Return proposals     │                        │                      │
-   │◄─────────────────────────│                        │                      │
-   │                          │                        │                      │
-   │  3. Show proposal UI     │                        │                      │
-   │    (User signs tx in     │                        │                      │
-   │     Freighter wallet)    │                        │                      │
-   │                          │                        │                      │
-   │  4. POST /vote {signedXdr}                        │                      │
-   │─────────────────────────►│                        │                      │
-   │                          │  5. submitTransaction  │                      │
-   │                          │───────────────────────►│                      │
-   │                          │                        │  6. Consensus        │
-   │                          │                        │─────────────────────►│
-   │                          │                        │◄─────────────────────│
-   │                          │◄───────────────────────│                      │
-   │◄─────────────────────────│                        │                      │
-   │                          │                        │                      │
-   │  7. SSE: VoteCastEvent   │                        │                      │
-   │◄─────────────────────────│                        │                      │
-   │                          │                        │                      │
-```
+- [About](#-about)
+- [Projects](#-projects)
+- [Architecture Overview](#-architecture-overview)
+- [Tech Stack](#-tech-stack)
+- [Getting Started](#-getting-started)
+- [Development Workflow](#-development-workflow)
+- [Contributing](#-contributing)
+- [Code of Conduct](#-code-of-conduct)
+- [Security](#-security)
+- [License](#-license)
 
 ---
 
-## Repository Structure
+## 🎯 About
 
-The NexDAO ecosystem is split across multiple repositories:
+This organization builds **open-source infrastructure on the Stellar network** using Soroban smart contracts. Our projects span:
+
+- **Real World Assets (RWA)** — Tokenized asset issuance with compliance
+- **DAO Governance** — On-chain voting, treasury management, token-gated governance
+- **Credential Verification** — Decentralized identity and qualification verification
+- **DeFi Primitives** — Lending, staking, and economic trust protocols
+
+All projects are designed to be **modular, composable, and production-ready** — free for the Stellar ecosystem.
+
+---
+
+## 📦 Projects
+
+### Current Repositories
 
 | Repository | Description | Stack | Status |
-|------------|-------------|-------|--------|
-| [nexdao](https://github.com/ayomidearegbeshola29-dev/nexdao) | Organisation overview & monorepo | — | ✅ |
-| [nexdao-frontend](https://github.com/ayomidearegbeshola29-dev/nexdao-frontend) | Governance dashboard | Next.js, TypeScript, Tailwind CSS, Radix UI | ✅ |
-| [nexdao-backend](https://github.com/ayomidearegbeshola29-dev/nexdao-backend) | REST API + Soroban integration | Node.js, Express, Prisma, PostgreSQL | ✅ |
-| [nexdao-contracts](https://github.com/ayomidearegbeshola29-dev/nexdao-contracts) | Soroban smart contracts | Rust, Soroban SDK | 🚧 |
-| [nexdao-docs](https://github.com/ayomidearegbeshola29-dev/nexdao-docs) | Protocol documentation | Astro, Starlight | 🚧 |
-| [.github](https://github.com/ayomidearegbeshola29-dev/.github) | Community health files | — | ✅ |
+|---|---|---|---|
+| [stellarrwa](https://github.com/ayomidearegbeshola29-dev/stellarrwa) | RWA tokenization toolkit — issue, manage, and trade compliant real-world assets | Next.js · Express · Prisma · Soroban | 🚧 Active |
+| [nexdao](https://github.com/ayomidearegbeshola29-dev/nexdao) | DAO framework — on-chain voting, treasury, and token-gated governance | Next.js · Express · Prisma · Soroban | 🚧 Active |
+| [nexdao-frontend](https://github.com/ayomidearegbeshola29-dev/nexdao-frontend) | NexDAO governance dashboard | Next.js · Radix UI · TanStack Query | 🚧 Active |
+| [nexdao-backend](https://github.com/ayomidearegbeshola29-dev/nexdao-backend) | NexDAO REST API + Soroban integration | Express · Prisma · PostgreSQL | 🚧 Active |
+| [.github](https://github.com/ayomidearegbeshola29-dev/.github) | Organization health files, templates, and documentation | Markdown | ✅ |
+| [Quoren](https://github.com/ayomidearegbeshola29-dev/Quoren) | Decentralized credential verification protocol | Soroban · Rust | 🚧 Active |
+| [Crednova](https://github.com/ayomidearegbeshola29-dev/Crednova) | Economic trust protocol — identity bonds, delegation, staking | Soroban · Rust | 🚧 Active |
+| [Checkmate-Escrow](https://github.com/ayomidearegbeshola29-dev/Checkmate-Escrow) | Trustless chess wagering on Stellar | Soroban · React | 🚧 Active |
 
-### Dependency Graph
+---
 
+## 🏗 Architecture Overview
+
+### StellarRWA — Real World Assets
+
+```mermaid
+graph TB
+    subgraph Frontend["StellarRWA Frontend (Next.js)"]
+        D[Issuer Dashboard]
+    end
+    subgraph Backend["StellarRWA Backend (Express)"]
+        API[REST API]
+        PR[Prisma ORM]
+        SB[Soroban Tx Builder]
+    end
+    subgraph Database["PostgreSQL"]
+        DB[(Assets + Investors)]
+    end
+    subgraph Blockchain["Stellar Network"]
+        COMP[Compliance Contract]
+        LIFE[Lifecycle Contract]
+        BLEND[Blend Protocol]
+    end
+    D -->|HTTP| API
+    API --> PR --> DB
+    API --> SB -->|RPC| COMP
+    API --> SB -->|RPC| LIFE
+    LIFE -->|gated by| COMP
+    LIFE --> BLEND
 ```
-                  ┌──────────────────┐
-                  │   nexdao-docs    │
-                  │  (Documentation) │
-                  └────────┬─────────┘
-                           │ references
-                           ▼
-┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐
-│  nexdao-frontend │────▶│  nexdao-backend  │────▶│nexdao-contracts  │
-│  (Dashboard UI)  │     │  (REST API)      │     │(Soroban Contracts)│
-└──────────────────┘     └──────────────────┘     └──────────────────┘
-         │                       │                        │
-         │                       │                        │
-         ▼                       ▼                        ▼
-    Freighter               PostgreSQL                Stellar
-    Wallet                  Database                  Network
+
+### NexDAO — DAO Governance
+
+```mermaid
+graph LR
+    subgraph User["User"]
+        W[Freighter Wallet]
+    end
+    subgraph Frontend["NexDAO Frontend"]
+        UI[Dashboard UI]
+    end
+    subgraph Backend["NexDAO Backend"]
+        API2[REST API]
+        SSE[SSE Events]
+    end
+    subgraph Contracts["Soroban Contracts"]
+        GOV[Governance]
+        TRE[Multi-sig Treasury]
+        TOK[SEP-41 Token]
+    end
+    subgraph Network["Stellar"]
+        RPC[Stellar RPC]
+    end
+    W <--> UI
+    UI --> API2
+    API2 --> SSE --> UI
+    API2 --> RPC --> GOV
+    API2 --> RPC --> TRE
+    GOV --> TOK
+    TRE --> RPC
+```
+
+### Data Flow — Whitelist Action (StellarRWA)
+
+```mermaid
+sequenceDiagram
+    participant I as Issuer
+    participant D as Dashboard
+    participant API as Backend API
+    participant DB as PostgreSQL
+    participant SC as Soroban Contract
+
+    I->>D: Whitelist investor
+    D->>API: POST /api/assets/:id/whitelist
+    API->>API: Validate input (Zod)
+    API->>DB: Upsert investor record
+    API->>SC: Build compliance.add_to_whitelist() tx
+    SC-->>API: Tx hash confirmed
+    API-->>D: 200 OK
+    D-->>I: Investor whitelisted
+```
+
+### Data Flow — Voting (NexDAO)
+
+```mermaid
+sequenceDiagram
+    participant V as Voter
+    participant UI as Frontend
+    participant API2 as Backend
+    participant RPC2 as Stellar RPC
+    participant GOV2 as Governance Contract
+
+    V->>UI: Connect wallet
+    V->>UI: Vote on proposal
+    UI->>UI: Sign tx in Freighter
+    UI->>API2: POST /api/vote {signedXdr}
+    API2->>RPC2: submitTransaction()
+    RPC2->>GOV2: governance.vote()
+    GOV2-->>RPC2: Vote recorded
+    RPC2-->>API2: Tx hash
+    API2->>UI: SSE: VoteCast event
+    UI-->>V: Vote confirmed
 ```
 
 ---
 
-## Tech Stack
+## 🛠 Tech Stack
 
 ### Frontend
 
-| Technology | Purpose |
-|------------|---------|
-| [Next.js 14](https://nextjs.org/) | React framework with App Router |
-| [TypeScript](https://www.typescriptlang.org/) | Type-safe JavaScript |
-| [Tailwind CSS](https://tailwindcss.com/) | Utility-first styling |
-| [Radix UI](https://www.radix-ui.com/) | Accessible UI primitives |
-| [TanStack Query](https://tanstack.com/query) | Server state management |
-| [Lucide React](https://lucide.dev/) | Icon library |
-| [@stellar/stellar-sdk](https://github.com/stellar/stellar-sdk) | Stellar blockchain SDK |
+| Technology | Used In | Purpose |
+|---|---|---|
+| [Next.js 14](https://nextjs.org/) | StellarRWA, NexDAO | React framework with App Router |
+| [TypeScript](https://www.typescriptlang.org/) | All projects | Type-safe JavaScript |
+| [Tailwind CSS](https://tailwindcss.com/) | StellarRWA, NexDAO | Utility-first styling |
+| [Radix UI](https://www.radix-ui.com/) | StellarRWA, NexDAO | Accessible UI primitives |
+| [TanStack Query](https://tanstack.com/query) | StellarRWA, NexDAO | Server state management |
+| [Lucide React](https://lucide.dev/) | StellarRWA, NexDAO | Icon library |
 
 ### Backend
 
-| Technology | Purpose |
-|------------|---------|
-| [Node.js 20](https://nodejs.org/) | JavaScript runtime |
-| [Express 4](https://expressjs.com/) | Web framework |
-| [TypeScript](https://www.typescriptlang.org/) | Type-safe JavaScript |
-| [Prisma 5](https://www.prisma.io/) | Database ORM |
-| [PostgreSQL 16](https://www.postgresql.org/) | Relational database |
-| [Zod 3](https://zod.dev/) | Schema validation |
-| [@stellar/stellar-sdk](https://github.com/stellar/stellar-sdk) | Stellar blockchain SDK |
+| Technology | Used In | Purpose |
+|---|---|---|
+| [Node.js 20](https://nodejs.org/) | StellarRWA, NexDAO | JavaScript runtime |
+| [Express 4](https://expressjs.com/) | StellarRWA, NexDAO | Web framework |
+| [Prisma 5](https://www.prisma.io/) | StellarRWA, NexDAO | Database ORM |
+| [PostgreSQL](https://www.postgresql.org/) | StellarRWA, NexDAO | Relational database |
+| [Zod](https://zod.dev/) | StellarRWA, NexDAO | Schema validation |
 
 ### Smart Contracts
 
-| Technology | Purpose |
-|------------|---------|
-| [Rust](https://www.rust-lang.org/) | Smart contract language |
-| [Soroban SDK](https://soroban.stellar.org/) | Stellar smart contract platform |
-| [SEP-41](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0041.md) | Token standard |
+| Technology | Used In | Purpose |
+|---|---|---|
+| [Rust](https://www.rust-lang.org/) | All Soroban projects | Smart contract language |
+| [Soroban SDK](https://soroban.stellar.org/) | All Soroban projects | Stellar smart contract platform |
+| [SEP-41](https://github.com/stellar/stellar-protocol) | Various | Token standard |
 
 ---
 
-## Getting Started
-
-### Quick Start
-
-```bash
-# 1. Clone all repositories
-git clone https://github.com/ayomidearegbeshola29-dev/nexdao-frontend.git
-git clone https://github.com/ayomidearegbeshola29-dev/nexdao-backend.git
-
-# 2. Start the backend
-cd nexdao-backend
-npm install
-cp .env.example .env
-npx prisma generate && npx prisma db push
-npm run dev
-
-# 3. Start the frontend (in a new terminal)
-cd ../nexdao-frontend
-npm install
-cp .env.example .env.local
-npm run dev
-```
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- **Node.js** 20+ and npm
-- **PostgreSQL** 16+ (or Docker for local development)
-- **Freighter Wallet** browser extension (Stellar wallet)
-- **Rust** (for smart contract development)
+| Requirement | Version | Purpose |
+|---|---|---|
+| Node.js | 20+ | Frontend & Backend runtime |
+| npm | 10+ | Package manager |
+| PostgreSQL | 15+ | Database |
+| Rust | 1.75+ | Smart contract development |
+| Soroban CLI | Latest | Contract deployment |
+| Freighter Wallet | Latest | Stellar wallet (browser extension) |
 
----
+### Quick Start — StellarRWA
 
-## How It Works
+```bash
+# Clone the monorepo
+git clone https://github.com/ayomidearegbeshola29-dev/stellarrwa.git
+cd stellarrwa
 
-### 1. Proposal Lifecycle
+# Backend setup
+cd backend
+npm install
+cp .env.example .env
+# Edit .env with your database URL
+npx prisma db push
+npm run dev    # :3001
 
-```
-Created ──► Active ──► Passed/Rejected ──► Executed
-   │           │             │                  │
-   │           ▼             │                  │
-   │      Voting Open        │                  │
-   │    Quadratic Weights    │                  │
-   │    Quorum Required      │                  │
-   │                         │                  │
-   │                  Deadline Reached          │
-   │                  Votes Tallied             │
-   │                                            │
-   │                                     Treasury
-   │                                     Transfer
-```
-
-### 2. Quadratic Voting
-
-Voting power is calculated quadratically based on token balance:
-
-```
-votingWeight = sqrt(numberOfTokens)
+# Frontend setup (new terminal)
+cd ../frontend
+npm install
+cp .env.example .env.local
+npm run dev    # :3000
 ```
 
-This ensures that larger token holders have proportionally less influence, promoting more democratic governance.
+### Quick Start — NexDAO
 
-### 3. Treasury Multi-Sig
+```bash
+# Backend
+git clone https://github.com/ayomidearegbeshola29-dev/nexdao-backend.git
+cd nexdao-backend
+npm install
+cp .env.example .env
+npx prisma db push
+npm run dev    # :3001
 
-Treasury spend proposals require:
-1. **Proposal creation** — Any member can propose a spend
-2. **Voting period** — Members vote on the proposal
-3. **Quorum achieved** — Minimum participation threshold met
-4. **Majority approval** — More for than against
-5. **Execution** — Multi-sig signers execute the transfer
-
----
-
-## Development Roadmap
-
-### Phase 1: Core Infrastructure ✅
-- [x] Project structure and monorepo setup
-- [x] Frontend dashboard with Next.js
-- [x] Backend API with Express + Prisma
-- [x] Database schema and migrations
-
-### Phase 2: Smart Contracts 🚧
-- [ ] Governance contract (proposal + quadratic voting)
-- [ ] Treasury multi-sig contract
-- [ ] SEP-41 governance token
-- [ ] Contract testing suite
-
-### Phase 3: Integration 🚧
-- [ ] Frontend ↔ Backend API integration
-- [ ] Backend ↔ Soroban RPC integration
-- [ ] Freighter wallet connection
-- [ ] Transaction signing flow
-
-### Phase 4: Real-Time Features 📋
-- [ ] Webhook listener for on-chain events
-- [ ] SSE push to frontend
-- [ ] Real-time vote updates
-- [ ] Live quorum tracking
-
-### Phase 5: Production Readiness 📋
-- [ ] Comprehensive test suite
-- [ ] Security audit
-- [ ] Docker deployment
-- [ ] CI/CD pipeline
+# Frontend
+git clone https://github.com/ayomidearegbeshola29-dev/nexdao-frontend.git
+cd nexdao-frontend
+npm install
+cp .env.example .env.local
+npm run dev    # :3000
+```
 
 ---
 
-## Contributing
+## 🔄 Development Workflow
 
-We welcome contributions from developers of all skill levels! Whether you're fixing a bug, adding a feature, or improving documentation, your help is appreciated.
+```mermaid
+flowchart TD
+    A[Fork Repository] --> B[Clone Fork]
+    B --> C[Create Feature Branch]
+    C --> D[Make Changes]
+    D --> E[Write/Update Tests]
+    E --> F{Run Tests}
+    F -->|Pass| G[Commit Changes]
+    F -->|Fail| D
+    G --> H[Push to Fork]
+    H --> I[Open Pull Request]
+    I --> J[Code Review]
+    J --> K{Approved?}
+    K -->|Yes| L[Merge to Main]
+    K -->|No| D
+    L --> M[Deploy to Staging]
+    M --> N[QA Verification]
+    N --> O[Deploy to Production]
+```
 
-### How to Contribute
+### Branch Naming
 
-1. **Browse issues** — Check our [issue tracker](https://github.com/ayomidearegbeshola29-dev/nexdao/issues) for tasks tagged `good-first-issue` or `help-wanted`
-2. **Fork the repo** — Create your own fork of the relevant repository
-3. **Create a branch** — `git checkout -b feature/amazing-feature`
-4. **Commit changes** — `git commit -m 'Add some amazing feature'`
-5. **Push to branch** — `git push origin feature/amazing-feature`
-6. **Open a PR** — Submit a pull request with a clear description
+| Prefix | Example | Purpose |
+|---|---|---|
+| `feature/` | `feature/add-asset-minting` | New features |
+| `fix/` | `fix/whitelist-validation` | Bug fixes |
+| `docs/` | `docs/api-reference` | Documentation |
+| `refactor/` | `refactor/prisma-queries` | Code refactoring |
+| `test/` | `test/contract-unit-tests` | Test additions |
+| `chore/` | `chore/update-deps` | Build/config changes |
 
-### Development Guidelines
+### Commit Convention
 
-- Follow the existing code style and conventions
-- Write tests for new features
-- Update documentation as needed
-- Keep PRs focused and manageable in size
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
-For detailed guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
+```
+<type>(<scope>): <description>
+
+feat(api): add investor whitelist endpoint
+fix(contract): correct compliance check ordering
+docs(readme): update quick start guide
+```
 
 ---
 
-## Community
+## 🤝 Contributing
 
-- **Issues** — Bug reports and feature requests
-- **Discussions** — Questions and ideas (coming soon)
-- **Security** — Report vulnerabilities to [SECURITY.md](SECURITY.md)
+We welcome contributions of all kinds! Here's how you can help:
 
-### Good First Issues
+### What We're Looking For
 
-Ready to contribute? Start with these:
+- **Code** — Bug fixes, features, improvements
+- **Documentation** — README updates, guides, API docs
+- **Testing** — Unit tests, integration tests, contract tests
+- **Design** — UI/UX improvements, diagrams, assets
+- **Issues** — Bug reports, feature requests, questions
 
-| Repository | Issue | Difficulty |
-|------------|-------|------------|
-| nexdao-frontend | Add wallet connect button | Easy |
-| nexdao-frontend | Implement proposal creation form | Medium |
-| nexdao-backend | Add API endpoint tests | Easy |
-| nexdao-backend | Implement SSE push for votes | Medium |
-| nexdao-contracts | Write contract unit tests | Medium |
+### Contribution Process
+
+1. **Find or create an issue** — Check `good-first-issue` tags
+2. **Fork the repository** — Create your own fork
+3. **Create a branch** — Follow our naming convention
+4. **Make your changes** — Follow existing code style
+5. **Write tests** — Ensure coverage for new code
+6. **Open a PR** — Fill out the PR template completely
+
+### Code Review
+
+All PRs require at least one approval. Reviewers check for:
+
+- **Correctness** — Does it work as expected?
+- **Quality** — Is it clean and maintainable?
+- **Coverage** — Are there tests?
+- **Documentation** — Are changes documented?
+- **Security** — Are there vulnerabilities?
+
+For full details, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
-## License
+## 📜 Code of Conduct
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+This organization is committed to providing a welcoming, inclusive, and harassment-free experience for everyone.
+
+**Our standards:**
+- Be respectful and empathetic
+- Accept constructive feedback gracefully
+- Focus on what's best for the community
+- Show kindness toward others
+
+**Unacceptable behavior:**
+- Harassment, trolling, or personal attacks
+- Discriminatory language or imagery
+- Publishing others' private information
+
+See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for the full text.
+
+---
+
+## 🔒 Security
+
+We take security seriously. If you discover a vulnerability:
+
+1. **DO NOT** open a public issue
+2. Report via [Security Advisory](https://github.com/ayomidearegbeshola29-dev/.github/security/advisories/new)
+3. Include: type, steps to reproduce, impact, suggested fix
+
+**Response timeline:**
+- 24h — Initial acknowledgment
+- 7d — Assessment and confirmation
+- 30d — Fix released
+
+See [SECURITY.md](SECURITY.md) for details.
+
+---
+
+## 📄 License
+
+All projects in this organization are **MIT licensed** unless otherwise noted.
 
 ```
 MIT License
 
-Copyright (c) 2025 NexDAO
+Copyright (c) 2026 ayomidearegbeshola29-dev
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -407,31 +410,38 @@ SOFTWARE.
 
 ---
 
-## Image Assets
+## 🗺 Roadmap
 
-> 🎨 The following diagrams are available as standalone images in the `assets/` directory:
+### Q2 2026
+- [x] StellarRWA monorepo structure
+- [x] Next.js frontend with Radix UI + Tailwind
+- [x] Express backend with Prisma + PostgreSQL
+- [ ] Complete compliance smart contract
+- [ ] Complete lifecycle smart contract
 
-| Diagram | Description |
-|---------|-------------|
-| `architecture-overview.png` | High-level system architecture |
-| `voting-flow.png` | End-to-end voting flow |
-| `contract-interactions.png` | Smart contract interaction diagram |
-| `data-flow-sequence.png` | Data flow sequence diagram |
-| `proposal-lifecycle.png` | Proposal lifecycle state machine |
-| `repo-dependencies.png` | Repository dependency graph |
+### Q3 2026
+- [ ] Blend integration for RWA collateral
+- [ ] Real-time event streaming (SSE)
+- [ ] Docker deployment setup
+- [ ] Comprehensive test coverage
 
-<!-- 
-  To generate these diagrams:
-  1. Use a tool like Mermaid, Draw.io, or Excalidraw
-  2. Export to PNG/SVG and place in the assets/ directory
-  3. Reference them in markdown like: ![Architecture](assets/architecture-overview.png)
--->
+### Q4 2026
+- [ ] Mainnet deployment
+- [ ] Security audit
+- [ ] Bug bounty program
+- [ ] Community governance
 
 ---
 
-<p align="center">
-  Built with ❤️ for the Stellar ecosystem
-</p>
-<p align="center">
-  <a href="https://github.com/ayomidearegbeshola29-dev">ayomidearegbeshola29-dev</a>
-</p>
+<div align="center">
+  <p>
+    <sub>
+      <a href="https://github.com/ayomidearegbeshola29-dev">GitHub Organization</a> •
+      <a href="https://github.com/ayomidearegbeshola29-dev/.github/discussions">Discussions</a> •
+      <a href="https://github.com/ayomidearegbeshola29-dev/.github/security/policy">Security</a>
+    </sub>
+  </p>
+  <p>
+    <sub>Built with ❤️ for the Stellar ecosystem</sub>
+  </p>
+</div>

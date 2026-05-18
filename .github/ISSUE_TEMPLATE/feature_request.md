@@ -6,14 +6,39 @@ labels: enhancement
 assignees: ''
 ---
 
-**Is your feature request related to a problem?**
+## Problem Statement
+
+**Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
-**Describe the Solution**
+## Proposed Solution
+
+**Describe the solution you'd like**
 A clear and concise description of what you want to happen.
 
-**Describe Alternatives**
+## Alternatives Considered
+
+**Describe alternatives you've considered**
 A clear and concise description of any alternative solutions or features you've considered.
 
-**Additional Context**
+## User Impact
+
+How would this feature benefit users?
+
+- [ ] Improves existing functionality
+- [ ] Adds new capability
+- [ ] Enhances developer experience
+- [ ] Improves performance
+- [ ] Other (please describe)
+
+## Implementation Ideas (Optional)
+
+If you have ideas on how to implement this:
+
+```
+Pseudo-code, architecture notes, or references
+```
+
+## Additional Context
+
 Add any other context or screenshots about the feature request here.

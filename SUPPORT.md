@@ -1,31 +1,59 @@
 # Support
 
-## Getting Help
+## How to Get Help
 
-### Documentation
+### 1. Documentation First
 
 Start with the README files in each repository:
 
-- [nexdao](https://github.com/ayomidearegbeshola29-dev/nexdao) — Organisation overview
-- [nexdao-frontend](https://github.com/ayomidearegbeshola29-dev/nexdao-frontend) — Frontend dashboard
-- [nexdao-backend](https://github.com/ayomidearegbeshola29-dev/nexdao-backend) — Backend API
+| Project | README |
+|---|---|
+| **StellarRWA** | [stellarrwa/README.md](https://github.com/ayomidearegbeshola29-dev/stellarrwa#readme) |
+| **NexDAO** | [nexdao/README.md](https://github.com/ayomidearegbeshola29-dev/nexdao#readme) |
+| **NexDAO Frontend** | [nexdao-frontend/README.md](https://github.com/ayomidearegbeshola29-dev/nexdao-frontend#readme) |
+| **NexDAO Backend** | [nexdao-backend/README.md](https://github.com/ayomidearegbeshola29-dev/nexdao-backend#readme) |
+| **Quoren** | [Quoren/README.md](https://github.com/ayomidearegbeshola29-dev/Quoren#readme) |
+| **Crednova** | [Crednova/README.md](https://github.com/ayomidearegbeshola29-dev/Crednova#readme) |
 
-### Issues
+### 2. Search Existing Issues
 
-Browse existing issues or create a new one in the relevant repository:
+Browse open and closed issues in the relevant repository:
 
-- [Bug Report](https://github.com/ayomidearegbeshola29-dev/nexdao/issues/new?template=bug_report.md)
-- [Feature Request](https://github.com/ayomidearegbeshola29-dev/nexdao/issues/new?template=feature_request.md)
+- [StellarRWA Issues](https://github.com/ayomidearegbeshola29-dev/stellarrwa/issues)
+- [NexDAO Issues](https://github.com/ayomidearegbeshola29-dev/nexdao/issues)
+- [Other Projects](https://github.com/orgs/ayomidearegbeshola29-dev/projects)
 
-### Discussions
+### 3. Open a New Issue
 
-For questions, ideas, and community discussion, open a [Discussion](https://github.com/ayomidearegbeshola29-dev/nexdao/discussions).
+If you can't find an answer:
+
+- **Bug report** — Use the [Bug Report template](.github/ISSUE_TEMPLATE/bug_report.md)
+- **Feature request** — Use the [Feature Request template](.github/ISSUE_TEMPLATE/feature_request.md)
+- **Question** — Open a regular issue
+
+### 4. Start a Discussion
+
+For questions, ideas, and community discussion:
+
+- [GitHub Discussions](https://github.com/ayomidearegbeshola29-dev/.github/discussions)
 
 ## Before Reaching Out
 
-1. Check existing issues and discussions
-2. Review the documentation
-3. Search for similar problems
-4. Include relevant details (logs, screenshots, steps to reproduce)
+1. ✅ Checked existing issues and discussions
+2. ✅ Reviewed the documentation
+3. ✅ Searched for similar problems
+4. ✅ Included relevant details (logs, screenshots, steps to reproduce)
+
+## What to Include in Bug Reports
+
+To help us resolve issues quickly, please include:
+
+- **Description** — What happened vs. what should have happened
+- **Steps** — Exact steps to reproduce
+- **Environment** — OS, browser, Node version, package version
+- **Logs** — Error messages, console output
+- **Screenshots** — If applicable
+
+---
 
 We'll do our best to help!

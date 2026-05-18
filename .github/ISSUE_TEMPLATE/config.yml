@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: GitHub Discussions
+    url: https://github.com/ayomidearegbeshola29-dev/.github/discussions
+    about: Please ask questions and start discussions here
+  - name: Security Policy
+    url: https://github.com/ayomidearegbeshola29-dev/.github/security/policy
+    about: Please report security vulnerabilities here
